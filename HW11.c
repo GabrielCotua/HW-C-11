@@ -1,5 +1,7 @@
 // Gabriel Cotua HW 11
 
+
+// Libraries
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -10,24 +12,32 @@ int GetNumSets();
 int GetNumStartEndPts();
 int GetNumPts();
 double * CreateDataset(int elemNum);
-double Average();
+double Average(double arr[], int elemNum);
 
 // Running Function
 int main(void) {
   srand(time(NULL));
 
-  int sets = GetNumSets();
-  printf("Number of Sets: %d\n", sets);
+  int numsPts = 0;
+  int nSets = GetNumSets();
+  double * DataSet = malloc(nSets * sizeof(double*)); // creates a array of pointers ( will be used to host more arrays )
 
-  double * DataSet[sets];
+  printf("Number of Sets: %d\n", nSets);
 
-  int points = GetNumPts();
-  printf("Number of Points: %d\n", points);
+  double * ptr = DataSet;
+  for ( int i = 0; i < nSets; i++, ptr++) {
+    numsPts = GetNumPts();
+    ptr = CreateDataset(numsPts);
+    printf("%lf\n", Average(ptr, numsPts));
+  }
 
-
-
+/*
+  int nPts = GetNumPts();
+  printf("Number of Points: %d\n", nPts);
+*/
   free(DataSet);
   return 0;
+
 }
 
 // Function Definitions
@@ -53,18 +63,26 @@ double * CreateDataset(int elemNum) {
 
   double * ptr = arr;
 
-  for (int i = 0; i < elemNum-1; ++i, ++ptr) {
+  for (int i = 0; i < elemNum - 1; i++, ptr++) {
+      *ptr = ((double)rand() / RAND_MAX) * 10.0;
+  }
 
-    *ptr = ((double)rand() / RAND_MAX) * 10.0;
-    //  printf("%lf", *ptr);
-  } 
-  ++ptr;
-  ptr = NULL;
-
-
+  *ptr = -1.0;  // Setting last item as 'NULL' this will be our flag
+                // This value was the chosen one since there is no way
+                // of getting a negative number.
+   // printf("\nlocation [%p] = %d\n", ptr, arr[elemNum-1] == -1.0);
 
   return arr;
 }
 
-//  using arr[i] {580, 564, 555}
-//  using *ptr {535, 526, 543}
+double Average(double arr[], int elemNum) {
+  double totalSum = 0;
+
+  double * ptr = arr;
+  for (int i  = 0; i < elemNum; i++, ptr++) {
+    totalSum += *ptr;
+  }
+
+  return totalSum / elemNum;
+}
+
