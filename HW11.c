@@ -21,14 +21,46 @@ int main(void) {
   int numsPts = 0;
   int nSets = GetNumSets();
   double * DataSet = malloc(nSets * sizeof(double*)); // creates a array of pointers ( will be used to host more arrays )
-
+  double * avg = malloc(nSets * sizeof(double));
   printf("Number of Sets: %d\n", nSets);
+  int numStartEndPts = GetNumStartEndPts();
+  int * arrNtps = malloc(nSets * sizeof(int));
 
   double * ptr = DataSet;
-  for ( int i = 0; i < nSets; i++, ptr++) {
+  double * ptrAvg = avg;
+  int * ptrNtps = arrNtps;
+  for ( int i = 0; i < nSets; i++, ptr++, ptrAvg++, ptrNtps++) {
     numsPts = GetNumPts();
+    *ptrNtps = numsPts;
     ptr = CreateDataset(numsPts);
-    printf("%lf\n", Average(ptr, numsPts));
+    *ptrAvg = Average(ptr, numsPts);
+    //printf("%lf\n", Average(ptr, numsPts));
+  }
+
+  // depending on the size to show at the end and start, the output will be modified
+  switch (numStartEndPts)
+  {
+    case 2:
+      printf("%7s %8s %10s %20s %10s\n", "Set #", "Npts", "Average", "First_Data_Pts", "Last_Data_Pts_");
+      break;
+    case 3:
+      printf("%7s %8s %10s %24s %10s\n", "Set #", "Npts", "Average", "____First_Data_Pts____", "____Last_Data_Pts____");
+      break;
+    case 4:
+      printf("%7s %8s %10s %35s %30s\n", "Set #", "Npts", "Average", "_________First_Data_Pts_________", "_________Last_Data_Pts_________");
+      break;
+  }
+
+  
+  ptr = DataSet;
+  ptrAvg = avg;
+  ptrNtps = arrNtps;
+  for (int i = 0; i < nSets; i++, ptrAvg++, ptrNtps++) {
+    printf("%5d %10d %3s %2.4lf %3s", i, *ptrNtps, " ",*ptrAvg, " ");
+      for (int k = 0; k < numStartEndPts; k++, ptr++) {
+        printf("%3.4lf", *(ptr));
+      }
+      putchar('\n');
   }
 
 /*
@@ -36,6 +68,8 @@ int main(void) {
   printf("Number of Points: %d\n", nPts);
 */
   free(DataSet);
+  free(avg);
+  free(arrNtps);
   return 0;
 
 }
